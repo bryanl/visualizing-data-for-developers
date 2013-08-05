@@ -48,7 +48,7 @@ $(function() {
 
   });
 
- $(".canvas2").bind('deck.becameCurrent', function(e, direction) {
+  $(".canvas2").bind('deck.becameCurrent', function(e, direction) {
     var width = $(e.target).width();
     var height = $(e.target).height();
     var padding = 100;
@@ -127,24 +127,143 @@ $(function() {
       var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
 
       context.beginPath();
-      context.arc(center,y1, radius, 0, 2*Math.PI);
+      context.arc(center,y1, radius, 0, 2*Math.PI, false);
+      context.closePath();
       context.stroke();
 
       context.beginPath();
-      context.arc(center,y2, radius, 0, 2*Math.PI);
+      context.arc(center,y2, radius, 0, 2*Math.PI, false);
+      context.closePath();      
       context.stroke();
 
       counter++;
     });
-
   });
 
-  $.deck('.slide');  
+$(".canvas5").bind('deck.becameCurrent', function(e, direction) {
+  var width = $(e.target).width();
+  var height = $(e.target).height();
+  var padding = 100;
+  var lineLength = 0.60;
 
-  function drawLine(context, fromX, fromY, toX, toY, style, width) {
-    context.lineWidth = width;
-    context.moveTo(fromX, fromY);
-    context.lineTo(toX, toY)
-    context.stroke();
-  }
+  var canvas = $(e.target).find('canvas')[0];
+  var context = canvas.getContext("2d");
+
+  context.canvas.width = width;
+  context.canvas.height = height;
+
+  context.clearRect ( 0, 0, width , height);
+
+  drawLine(context, padding, height - padding, width - padding, height - padding, "#000", 8);
+  drawLine(context, padding, padding, padding, height - padding, "#000", 8);
+
+  var tempPadding = 8;
+  var xAxisLength = width - (2 * padding);
+  var yAxisLength = height - (2 * padding);
+
+  var maxTemp = 100;
+  var minTemp = 0;
+
+  var highColor = "#ff7f00";
+  var lowColor = "#148d9f";
+  var tempColor = "#fff";
+
+  var counter = 0;
+  $.each(demo.temperatureData, function(month, value) {
+    context.lineWidth = 1;
+    var monthWidth = xAxisLength / 12;
+    var center = counter * monthWidth + (monthWidth / 2) + padding
+    var radius = (monthWidth / 2) - (tempPadding * 2)
+    var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
+    var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+
+    context.fillStyle = highColor;
+    context.beginPath();    
+    context.arc(center,y1, radius, 0, 2*Math.PI, false);
+    context.closePath();
+    context.fill();
+
+    context.fillStyle = lowColor;
+    context.beginPath();    
+    context.arc(center,y2, radius, 0, 2*Math.PI, false);
+    context.closePath();
+    context.fill();
+
+    counter++;
+  });
+});
+
+
+$(".canvas6").bind('deck.becameCurrent', function(e, direction) {
+  var width = $(e.target).width();
+  var height = $(e.target).height();
+  var padding = 100;
+  var lineLength = 0.60;
+
+  var canvas = $(e.target).find('canvas')[0];
+  var context = canvas.getContext("2d");
+
+  context.canvas.width = width;
+  context.canvas.height = height;
+
+  context.clearRect ( 0, 0, width , height);
+
+  drawLine(context, padding, height - padding, width - padding, height - padding, "#000", 8);
+  drawLine(context, padding, padding, padding, height - padding, "#000", 8);
+
+  var tempPadding = 8;
+  var xAxisLength = width - (2 * padding);
+  var yAxisLength = height - (2 * padding);
+
+  var maxTemp = 100;
+  var minTemp = 0;
+
+  var highColor = "#ff7f00";
+  var lowColor = "#148d9f";
+  var tempColor = "#fff";
+  var tempFontSize = 16;
+
+  var counter = 0;
+  $.each(demo.temperatureData, function(month, value) {
+    context.lineWidth = 1;
+    var monthWidth = xAxisLength / 12;
+    var center = counter * monthWidth + (monthWidth / 2) + padding
+    var radius = (monthWidth / 2) - (tempPadding * 2)
+    var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
+    var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+
+    context.fillStyle = highColor;
+    context.beginPath();    
+    context.arc(center,y1, radius, 0, 2*Math.PI, false);
+    context.closePath();
+    context.fill();
+
+    context.font = tempFontSize + 'pt Calibri';
+    context.textAlign = 'center';
+    context.fillStyle = tempColor;
+    context.fillText(value.high, center, y1+(tempFontSize/2));
+
+    context.fillStyle = lowColor;
+    context.beginPath();    
+    context.arc(center,y2, radius, 0, 2*Math.PI, false);
+    context.closePath();
+    context.fill();
+
+    context.font = tempFontSize + 'pt Calibri';
+    context.textAlign = 'center';
+    context.fillStyle = tempColor;
+    context.fillText(value.low, center, y2+(tempFontSize/2));
+
+    counter++;
+  });
+});
+
+$.deck('.slide');  
+
+function drawLine(context, fromX, fromY, toX, toY, style, width) {
+  context.lineWidth = width;
+  context.moveTo(fromX, fromY);
+  context.lineTo(toX, toY)
+  context.stroke();
+}
 });
