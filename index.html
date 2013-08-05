@@ -17,9 +17,11 @@
 	<link rel="stylesheet" href="extensions/status/deck.status.css">
 	<link rel="stylesheet" href="extensions/hash/deck.hash.css">
 	<link rel="stylesheet" href="extensions/scale/deck.scale.css">
+	<link rel="stylesheet" href="extensions/codemirror/deck.codemirror.css">
+	<link rel="stylesheet" href="extensions/codemirror/themes/default.css">
 
 	<!-- Style theme. More available in /themes/style/ or create your own. -->
-	<link rel="stylesheet" href="themes/style/web-2.0.css">
+	<link rel="stylesheet" href="themes/style/stylesheets/screen.css">
 	
 	<!-- Transition theme. More available in /themes/transition/ or create your own. -->
 	<link rel="stylesheet" href="themes/transition/horizontal-slide.css">
@@ -27,15 +29,24 @@
 	<!-- Required Modernizr file -->
 	<script src="modernizr.custom.js"></script>
 
+	<script type="text/javascript">
+		window.demo = {};
 
-	<!-- goodies -->
-	<script src="goodies/paper.js"></script>
-	<script src="goodies/d3.js"></script>
-
-	<script src='goodies/mathbox/underscore.js'></script>
-	<script src="goodies/mathbox/tquery-bundle.js"></script>
-	<script src="goodies/mathbox/MathBox.js"></script>
-
+		demo.temperatureData = {
+			"January": { "high": 41, "low": 24},
+			"Febrary": { "high": 45, "low": 27},
+			"March": { "high": 55, "low": 34},
+			"April": { "high": 65, "low": 43},
+			"May": { "high": 74, "low": 52},
+			"June": { "high": 83, "low": 62},
+			"July": { "high": 87, "low": 67},
+			"August": { "high": 85, "low": 65},
+			"September": { "high": 78, "low": 58},
+			"October": { "high": 67, "low": 45},
+			"November": { "high": 56, "low": 37},
+			"December": { "high": 45, "low": 28},
+		};
+	</script>
 
 </head>
 <body class="deck-container">
@@ -46,105 +57,59 @@
 		<h1>Visualizing Data for Developers</h1>
 	</section>
 
-	<!-- our data -->
 	<section class="slide">
-		<table>
-			<thead>
-				<tr>
-					<th>Month</th>
-					<th>High (F)</th>
-					<th>Low (F)</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>January</td>
-					<td>41</td>
-					<td>24</td>
-				</tr>
-				<tr>
-					<td>February</td>
-					<td>45</td>
-					<td>27</td>
-				</tr>
-				<tr>
-					<td>March</td>
-					<td>54</td>
-					<td>34</td>
-				</tr>
-				<tr>
-					<td>April</td>
-					<td>65</td>
-					<td>43</td>
-				</tr>
-				<tr>
-					<td>May</td>
-					<td>74</td>
-					<td>52</td>
-				</tr>
-				<tr>
-					<td>June</td>
-					<td>83</td>
-					<td>62</td>
-				</tr>
-				<tr>
-					<td>July</td>
-					<td>87</td>
-					<td>67</td>
-				</tr>
-				<tr>
-					<td>August</td>
-					<td>85</td>
-					<td>65</td>
-				</tr>
-				<tr>
-					<td>September</td>
-					<td>78</td>
-					<td>58</td>
-				</tr>
-				<tr>
-					<td>October</td>
-					<td>67</td>
-					<td>45</td>
-				</tr>
-				<tr>
-					<td>November</td>
-					<td>56</td>
-					<td>37</td>
-				</tr>
-				<tr>
-					<td>December</td>
-					<td>45</td>
-					<td>28</td>
-				</tr>
-			</tbody>
-		</table>
-	</section>	
+		<div style="margin-top: 60px">
+			<textarea id='showInput' name="code" class="code" mode="javascript" 
+				style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
+console.log(demo.temperatureData);
+		</textarea>
+	</div>
+</section>
 
-	<section class="slide">
-		<h1>The canvas</h1>
-	</section>
+<!-- our data -->
+<section class="slide temperatureView">
+	<table class='temperature'>
+		<caption>Baltimore, MD, USA average temperatures</caption>
+		<thead>
+			<tr>
+				<th>Month</th>
+				<th>High F</th>
+				<th>Low F</th>
+			</tr>
+		</thead>
+		<tbody>				
+		</tbody>
+	</table>
+</section>	
+
+<section class="slide">
+	<h1>Have data, will graph</h1>
+</section>
+
+<section class="slide">
+	<h1>The canvas</h1>
+</section>
 
 
-	<!-- drawing on the canvas -->
-	<section class="slide">
-		<canvas id="myNaiveCanvas" width="200" height="100"	style="border:1px solid #000000;">
-		</canvas>
-	</section>
+<!-- drawing on the canvas -->
+<section class="slide">
+	<canvas id="myNaiveCanvas" width="200" height="100"	style="border:1px solid #000000;">
+	</canvas>
+</section>
 
-	<script>
-		var c=document.getElementById("myNaiveCanvas");
-		var ctx=c.getContext("2d");
-		ctx.fillStyle="#FF0000";
-		ctx.fillRect(0,0,150,75);
-	</script>
+<script>
+	var c=document.getElementById("myNaiveCanvas");
+	var ctx=c.getContext("2d");
+	ctx.fillStyle="#FF0000";
+	ctx.fillRect(0,0,150,75);
+</script>
 
-	<!-- intro to paper.js -->
-	<section class="slide">
-		<canvas id='paperIntroCanvas' resize></canvas>
-	</section>
+<!-- intro to paper.js -->
+<section class="slide">
+	<canvas id='paperIntroCanvas' resize></canvas>
+</section>
 
-	<script type="text/paperscript" canvas="paperIntroCanvas">
+<script type="text/paperscript" canvas="paperIntroCanvas">
 	// Create a Paper.js Path to draw a line into it:
 	var path = new Path();
 	// Give the stroke a color
@@ -221,11 +186,21 @@
 <script src="extensions/navigation/deck.navigation.js"></script>
 <script src="extensions/scale/deck.scale.js"></script>
 
-<!-- Initialize the deck. You can put this in an external file if desired. -->
-<script>
-	$(function() {
-		$.deck('.slide');
-	});
-</script>
+<!-- other extensions -->
+<script src="extensions/deck.events.js"></script>
+<script src="extensions/codemirror/codemirror.js"></script>
+<script src="extensions/codemirror/mode/javascript/javascript.js"></script>
+<script src="extensions/codemirror/deck.codemirror.js"></script>
+
+<!-- goodies -->
+<script src="goodies/paper.js"></script>
+<script src="goodies/d3.js"></script>
+
+<script src='goodies/mathbox/underscore.js'></script>
+<script src="goodies/mathbox/tquery-bundle.js"></script>
+<script src="goodies/mathbox/MathBox.js"></script>
+
+<script src="presentation.js"></script>
+
 </body>
 </html>
