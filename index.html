@@ -90,19 +90,25 @@ console.log(demo.temperatureData);
 	<h1>The canvas</h1>
 </section>
 
-
-<!-- drawing on the canvas -->
-<section class="slide">
-	<canvas id="myNaiveCanvas" width="200" height="100"	style="border:1px solid #000000;">
-	</canvas>
+<section class="slide canvas1" id='draw_on_canvas'>
+	<canvas></canvas>
 </section>
 
-<script>
-	var c=document.getElementById("myNaiveCanvas");
-	var ctx=c.getContext("2d");
-	ctx.fillStyle="#FF0000";
-	ctx.fillRect(0,0,150,75);
-</script>
+<section class="slide canvas2" id='draw_axes'>
+	<canvas></canvas>
+</section>
+
+<section class="slide canvas3" id='draw_axes_2'>
+	<canvas></canvas>
+</section>
+
+<section class="slide canvas4" id='draw_temps'>
+	<canvas></canvas>
+</section>
+
+<section class="slide">
+	<p>fin</p>
+</section>
 
 <!-- intro to paper.js -->
 <section class="slide">
