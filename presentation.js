@@ -518,6 +518,144 @@ $(function () {
         drawTemps(context, tempPoints.low);
     });
 
+    $(".paper1").bind('deck.becameCurrent', function (e) {
+        var context = initCanvas(e.target),
+            padding = 100,
+            width = context.canvas.width,
+            height = context.canvas.height,
+            xAxisLength = width - (2 * padding),
+            yAxisLength = height - (2 * padding),
+            monthWidth = xAxisLength / 12,
+
+            highColor = "#ff7f00",
+            lowColor = "#148d9f",
+
+            maxTemp = 100,
+            minTemp = 10,
+            tempLabelWidth = 60,
+
+            tempLabelX = padding - tempLabelWidth;
+
+        paper.setup(context.canvas);
+
+
+        var grid = new paper.Rectangle(new paper.Point(padding, padding),
+            new paper.Point(xAxisLength + padding, yAxisLength + padding));
+        var gridPath = new paper.Path.Rectangle(grid);
+        gridPath.fillColor = "#f0eeda";
+
+        var tempLabel = new paper.Rectangle(
+            new paper.Point(tempLabelX, padding),
+            new paper.Point(tempLabelX + tempLabelWidth, padding + yAxisLength)
+        );
+        var tempLabelPath = new paper.Path.Rectangle(tempLabel);
+        tempLabelPath.fillColor = "#ded8b5";
+
+        for (var i = minTemp; i < maxTemp; i++) {
+            var labelY = height - (yAxisLength * i / maxTemp) - padding;
+
+            if (i % 10 == 0) {
+                var path = new paper.Path();
+                path.strokeColor = "#bababa";
+                path.lineWidth = .75;
+                path.add(new paper.Point(padding, labelY));
+                path.add(new paper.Point(padding + xAxisLength, labelY))
+            }
+
+            if (i % 20 == 0) {
+                var labelX = tempLabelX + tempLabelWidth / 2;
+                new paper.PointText({
+                    point: paper.view.center,
+                    justification: 'center',
+                    fontSize: 12,
+                    fillColor: '#3b5b78',
+                    content: i + "°F",
+                    position: new paper.Point(labelX, labelY)
+                });
+            }
+        }
+
+        var displayMonthLabels = function (i, month) {
+            var monthFontSize = 16,
+                monthFontPadding = 1,
+                x1 = padding + monthWidth * i ,
+                y1 = padding - 2 * monthFontSize,
+                x2 = x1 + monthWidth - monthFontPadding,
+                y2 = y1 + 2 * monthFontSize + monthFontPadding,
+                textX = i * monthWidth + monthWidth / 2 + padding,
+                textY = y1 + 1.5 * monthFontSize;
+
+            var monthLabel = new paper.Rectangle(
+                new paper.Point(x1, y1),
+                new paper.Point(x2, y2)
+            );
+            var monthLabelPath = new paper.Path.Rectangle(monthLabel);
+            monthLabelPath.fillColor = "#9f9e83";
+
+            new paper.PointText({
+                point: paper.view.center,
+                justification: 'center',
+                fontSize: monthFontSize,
+                fillColor: '#fff',
+                content: month.substring(0, 3),
+                position: new paper.Point(textX, textY)
+            });
+        };
+
+        var lowLinkPath = new paper.Path();
+        var highLinkPath = new paper.Path();
+
+        lowLinkPath.strokeColor = lowColor;
+        lowLinkPath.lineWidth = .75;
+        highLinkPath.strokeColor = highColor;
+        highLinkPath.lineWidth = .75;
+
+        var linkBubbles = function (i, month, temps) {
+            var lowPosition = tempBubblePosition(i, 'low', temps);
+            var highPosition = tempBubblePosition(i, 'high', temps)
+            lowLinkPath.add(lowPosition.point);
+            highLinkPath.add(highPosition.point);
+        }
+
+        var tempBubblePosition = function (i, type, temps) {
+            var temp = temps[type];
+            var x = i * monthWidth + (monthWidth / 2) + padding;
+            var y = height - yAxisLength * temp / maxTemp - padding;
+            return {point: new paper.Point(x, y)};
+        }
+
+        var displayTempBubbles = function (i, month, temps) {
+            var tempPadding = 8,
+                radius = monthWidth / 2 - tempPadding * 2,
+                fontSize = 16,
+                highPosition = tempBubblePosition(i, 'high', temps),
+                lowPosition = tempBubblePosition(i, 'low', temps);
+
+            var drawBubble = function (position, color) {
+                var circle = new paper.Path.Circle(position.point, radius);
+                circle.fillColor = color;
+
+                new paper.PointText({
+                    point: paper.view.center,
+                    justification: 'center',
+                    fontSize: fontSize,
+                    fillColor: '#fff',
+                    content: temps.high,
+                    position: position.point
+                });
+            }
+
+            drawBubble(highPosition, highColor);
+            drawBubble(lowPosition, lowColor);
+        };
+
+        withTemperatures(displayMonthLabels);
+        withTemperatures(linkBubbles);
+        withTemperatures(displayTempBubbles);
+
+        paper.view.draw();
+    });
+
 
     $.deck('.slide');
 
@@ -564,6 +702,32 @@ $(function () {
 
             drawTempArc(context, point.x, point.y, point.r, point.value, point.color, point.fontSize, point.fontColor);
         }
+    }
+
+    function initCanvas(element) {
+        var width = $(element).width();
+        var height = $(element).height();
+
+        var canvas = $(element).find('canvas')[0];
+        var context = canvas.getContext("2d");
+
+        context.canvas.width = width;
+        context.canvas.height = height;
+
+        context.clearRect(0, 0, width, height);
+
+        return context;
+    }
+
+
+    function withTemperatures(doThis) {
+        var counter = 0;
+        var previousTemps;
+        $.each(demo.temperatureData, function (key, value) {
+            doThis(counter, key, value, previousTemps);
+            previousTemps = value;
+            counter++;
+        });
     }
 
 });
