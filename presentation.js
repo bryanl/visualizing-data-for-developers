@@ -955,6 +955,70 @@ $(function () {
         paper.view.draw();
     });
 
+
+    $(".temperatureViewD31").bind('deck.becameCurrent', function (e) {
+        var table = $(e.target).find('table');
+
+        d3.select(table[0]).select('tbody').remove();
+
+        var tbody = d3.select(table[0])
+            .append("tbody")
+
+        var rows = tbody.selectAll("tr")
+            .data(demo.temperatureData)
+            .enter()
+            .append("tr");
+
+        rows.selectAll("td")
+            .data(function (row) {
+                return ['month', 'high', 'low'].map(function (column) {
+                    return {column: column, value: row[column] }
+                })
+            })
+            .enter()
+            .append("td")
+            .text(function (d) {
+                return d.value
+            });
+    });
+
+
+    $(".temperatureViewD32").bind('deck.becameCurrent', function (e) {
+        var table = $(e.target).find('table');
+
+        d3.select(table[0]).select('tbody').remove();
+
+        var tbody = d3.select(table[0])
+            .append("tbody")
+
+        var rows = tbody.selectAll("tr")
+            .data(demo.temperatureData)
+            .enter()
+            .append("tr")
+            .attr("class", function (d) {
+                if (d.high > 80) {
+                    return 'temp-hot'
+                }
+                else if (d.low < 40) {
+                    return 'temp-cold'
+                } else {
+                    return '';
+                }
+            });
+
+        rows.selectAll("td")
+            .data(function (row) {
+                return ['month', 'high', 'low'].map(function (column) {
+                    return {column: column, value: row[column] }
+                })
+            })
+            .enter()
+            .append("td")
+            .text(function (d) {
+                return d.value
+            });
+    });
+
     $.deck('.slide');
 
     function drawLine(context, fromX, fromY, toX, toY, style, width) {
@@ -1026,4 +1090,5 @@ $(function () {
         });
     }
 
-});
+})
+;
