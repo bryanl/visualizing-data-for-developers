@@ -2,7 +2,7 @@ $(function () {
 
     window.demo = {};
 
-    demo.temperatureData = {
+    demo.notSoGoodData = {
         "January": { "high": 41, "low": 24, max: 79, min: -7},
         "February": { "high": 45, "low": 27, max: 83, min: -7},
         "March": { "high": 55, "low": 34, max: 90, min: 5},
@@ -17,14 +17,32 @@ $(function () {
         "December": { "high": 45, "low": 28, max: 77, min: -3}
     };
 
+    demo.temperatureData = [
+        { month: "January", "high": 41, "low": 24, max: 79, min: -7},
+        { month: "February", "high": 45, "low": 27, max: 83, min: -7},
+        { month: "March", "high": 55, "low": 34, max: 90, min: 5},
+        { month: "April", "high": 65, "low": 43, max: 94, min: 15},
+        { month: "May", "high": 74, "low": 52, max: 98, min: 32},
+        { month: "June", "high": 83, "low": 62, max: 105, min: 40},
+        { month: "July", "high": 87, "low": 67, max: 107, min: 50},
+        { month: "August", "high": 85, "low": 65, max: 105, min: 45},
+        { month: "September", "high": 78, "low": 58, max: 101, min: 35},
+        { month: "October", "high": 67, "low": 45, max: 97, min: 25},
+        { month: "November", "high": 56, "low": 37, max: 86, min: 12},
+        { month: "December", "high": 45, "low": 28, max: 77, min: -3}
+    ];
+
     $(".temperatureView").bind('deck.becameCurrent', function (e) {
         var body = "";
-        $.each(demo.temperatureData, function (month, value) {
-            var row = "<td class='month'>" + month + "</td>";
-            row += "<td class='high'>" + value["high"] + "</td>";
-            row += "<td class='low'>" + value["low"] + "</td>";
+        var plot = function (index, data) {
+            var row = "<td class='month'>" + data.month + "</td>";
+            row += "<td class='high'>" + data.high + "</td>";
+            row += "<td class='low'>" + data.low + "</td>";
             body += "<tr>" + row + "</tr>"
-        });
+        };
+
+        withTemperatures(plot);
+
         $(e.target).find("table tbody").html(body);
     });
 
@@ -105,13 +123,13 @@ $(function () {
 
 
         var counter = 0;
-        $.each(demo.temperatureData, function (month, value) {
+        var plot = function (index, data) {
             context.lineWidth = 1;
             var monthWidth = xAxisLength / 12;
             var center = counter * monthWidth + (monthWidth / 2) + padding;
             var radius = (monthWidth / 2) - (tempPadding * 2);
-            var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
-            var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+            var y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+            var y2 = height - (yAxisLength * data.low / maxTemp) - padding;
 
             context.beginPath();
             context.arc(center, y1, radius, 0, 2 * Math.PI, false);
@@ -124,7 +142,9 @@ $(function () {
             context.stroke();
 
             counter++;
-        });
+        };
+
+        withTemperatures(plot);
     });
 
     $(".canvas5").bind('deck.becameCurrent', function (e) {
@@ -146,13 +166,13 @@ $(function () {
         var lowColor = "#148d9f";
 
         var counter = 0;
-        $.each(demo.temperatureData, function (month, value) {
+        var plot = function (index, data) {
             context.lineWidth = 1;
             var monthWidth = xAxisLength / 12;
             var center = counter * monthWidth + (monthWidth / 2) + padding;
             var radius = (monthWidth / 2) - (tempPadding * 2);
-            var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
-            var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+            var y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+            var y2 = height - (yAxisLength * data.low / maxTemp) - padding;
 
             var drawArc = function (color, x, y, radius) {
                 context.fillStyle = color;
@@ -166,7 +186,9 @@ $(function () {
             drawArc(lowColor, center, y2, radius);
 
             counter++;
-        });
+        };
+
+        withTemperatures(plot);
     });
 
     $(".canvas6").bind('deck.becameCurrent', function (e) {
@@ -190,13 +212,13 @@ $(function () {
         var tempFontSize = 16;
 
         var counter = 0;
-        $.each(demo.temperatureData, function (month, value) {
+        var plot = function (index, data) {
             context.lineWidth = 1;
             var monthWidth = xAxisLength / 12;
             var center = counter * monthWidth + (monthWidth / 2) + padding;
             var radius = (monthWidth / 2) - (tempPadding * 2);
-            var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
-            var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+            var y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+            var y2 = height - (yAxisLength * data.low / maxTemp) - padding;
 
             var drawArc = function (label, x, y, radius, color, fontColor, fontSize) {
                 context.fillStyle = color;
@@ -211,11 +233,13 @@ $(function () {
                 context.fillText(label.toString(), x, y + (fontSize / 2));
             };
 
-            drawArc(value.high, center, y1, radius, highColor, tempColor, tempFontSize);
-            drawArc(value.low, center, y2, radius, lowColor, tempColor, tempFontSize);
+            drawArc(data.high, center, y1, radius, highColor, tempColor, tempFontSize);
+            drawArc(data.low, center, y2, radius, lowColor, tempColor, tempFontSize);
 
             counter++;
-        });
+        };
+
+        withTemperatures(plot);
     });
 
     $(".canvas7").bind('deck.becameCurrent', function (e) {
@@ -240,16 +264,16 @@ $(function () {
         var monthFontPadding = 1;
 
         var counter = 0;
-        $.each(demo.temperatureData, function (month, value) {
+        var plot = function (index, data) {
             context.lineWidth = 1;
             var monthWidth = xAxisLength / 12;
             var center = counter * monthWidth + (monthWidth / 2) + padding;
             var radius = (monthWidth / 2) - (tempPadding * 2);
-            var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
-            var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+            var y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+            var y2 = height - (yAxisLength * data.low / maxTemp) - padding;
 
-            drawTempArc(context, center, y1, radius, value.high, highColor, tempFontSize, tempColor);
-            drawTempArc(context, center, y2, radius, value.low, lowColor, tempFontSize, tempColor);
+            drawTempArc(context, center, y1, radius, data.high, highColor, tempFontSize, tempColor);
+            drawTempArc(context, center, y2, radius, data.low, lowColor, tempFontSize, tempColor);
 
             context.fillStyle = monthLabelBg;
             var monthLabelX1 = counter * monthWidth + padding + monthFontPadding;
@@ -261,10 +285,12 @@ $(function () {
             context.font = monthFontSize + 'pt Calibri';
             context.textAlign = 'center';
             context.fillStyle = monthColor;
-            context.fillText(month.substring(0, 3), counter * monthWidth + ( monthWidth / 2) + padding, monthLabelY1 + 1.5 * monthFontSize);
+            context.fillText(data.month.substring(0, 3), counter * monthWidth + ( monthWidth / 2) + padding, monthLabelY1 + 1.5 * monthFontSize);
 
             counter++;
-        });
+        };
+
+        withTemperatures(plot);
 
         var tempLabelBg = "#ded8b5";
         var tempLabelWidth = 60;
@@ -335,16 +361,16 @@ $(function () {
         }
 
         var counter = 0;
-        $.each(demo.temperatureData, function (month, value) {
+        var plot = function (index, data) {
             context.lineWidth = 1;
             var monthWidth = xAxisLength / 12;
             var center = counter * monthWidth + (monthWidth / 2) + padding;
             var radius = (monthWidth / 2) - (tempPadding * 2);
-            var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
-            var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+            var y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+            var y2 = height - (yAxisLength * data.low / maxTemp) - padding;
 
-            drawTempArc(context, center, y1, radius, value.high, highColor, tempFontSize, tempColor);
-            drawTempArc(context, center, y2, radius, value.low, lowColor, tempFontSize, tempColor);
+            drawTempArc(context, center, y1, radius, data.high, highColor, tempFontSize, tempColor);
+            drawTempArc(context, center, y2, radius, data.low, lowColor, tempFontSize, tempColor);
 
             context.fillStyle = monthLabelBg;
             var monthLabelX1 = counter * monthWidth + padding + monthFontPadding;
@@ -356,12 +382,12 @@ $(function () {
             context.font = monthFontSize + 'pt Calibri';
             context.textAlign = 'center';
             context.fillStyle = monthColor;
-            context.fillText(month.substring(0, 3), counter * monthWidth + ( monthWidth / 2) + padding, monthLabelY1 + 1.5 * monthFontSize);
+            context.fillText(data.month.substring(0, 3), counter * monthWidth + ( monthWidth / 2) + padding, monthLabelY1 + 1.5 * monthFontSize);
 
             counter++;
-        });
+        };
 
-
+        withTemperatures(plot);
     });
 
     $(".canvas9").bind('deck.becameCurrent', function (e) {
@@ -414,18 +440,18 @@ $(function () {
 
         var counter = 0;
         var tempPoints = {high: [], low: []};
-        $.each(demo.temperatureData, function (month, value) {
+        var plot = function (index, data) {
             context.lineWidth = 1;
             var monthWidth = xAxisLength / 12;
             var center = counter * monthWidth + (monthWidth / 2) + padding;
             var radius = (monthWidth / 2) - (tempPadding * 2);
-            var y1 = height - (yAxisLength * value.high / maxTemp) - padding;
-            var y2 = height - (yAxisLength * value.low / maxTemp) - padding;
+            var y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+            var y2 = height - (yAxisLength * data.low / maxTemp) - padding;
 
-            tempPoints.high.push({x: center, y: y1, r: radius, width: monthWidth, value: value.high,
+            tempPoints.high.push({x: center, y: y1, r: radius, width: monthWidth, value: data.high,
                 color: highColor, fontSize: tempFontSize, fontColor: tempColor
             });
-            tempPoints.low.push({x: center, y: y2, r: radius, width: monthWidth, value: value.low,
+            tempPoints.low.push({x: center, y: y2, r: radius, width: monthWidth, value: data.low,
                 color: lowColor, fontSize: tempFontSize, fontColor: tempColor
             });
 
@@ -439,10 +465,12 @@ $(function () {
             context.font = monthFontSize + 'pt Calibri';
             context.textAlign = 'center';
             context.fillStyle = monthColor;
-            context.fillText(month.substring(0, 3), counter * monthWidth + ( monthWidth / 2) + padding, monthLabelY1 + 1.5 * monthFontSize);
+            context.fillText(data.month.substring(0, 3), counter * monthWidth + ( monthWidth / 2) + padding, monthLabelY1 + 1.5 * monthFontSize);
 
             counter++;
-        });
+        };
+
+        withTemperatures(plot);
 
         linkTemps(context, tempPoints.high, highColor);
         linkTemps(context, tempPoints.low, lowColor);
@@ -511,7 +539,7 @@ $(function () {
             }
         }
 
-        var displayMonthLabels = function (i, month) {
+        var displayMonthLabels = function (i, data) {
             var monthFontSize = 16,
                 monthFontPadding = 1,
                 x1 = padding + monthWidth * i ,
@@ -527,7 +555,7 @@ $(function () {
             );
             var monthLabelPath = new paper.Path.Rectangle(monthLabel);
             monthLabelPath.fillColor = "#9f9e83";
-            centeredText(month.substring(0, 3), textX, textY, monthFontSize, '#fff');
+            centeredText(data.month.substring(0, 3), textX, textY, monthFontSize, '#fff');
         };
 
         var lowLinkPath = new paper.Path();
@@ -538,26 +566,25 @@ $(function () {
         highLinkPath.strokeColor = highColor;
         highLinkPath.lineWidth = .75;
 
-        var linkBubbles = function (i, month, temps) {
-            var lowPosition = tempBubblePosition(i, 'low', temps);
-            var highPosition = tempBubblePosition(i, 'high', temps)
+        var linkBubbles = function (index, data) {
+            var lowPosition = tempBubblePosition(index, data.low);
+            var highPosition = tempBubblePosition(index, data.high);
             lowLinkPath.add(lowPosition.point);
             highLinkPath.add(highPosition.point);
-        }
+        };
 
-        var tempBubblePosition = function (i, type, temps) {
-            var temp = temps[type];
-            var x = i * monthWidth + (monthWidth / 2) + padding;
-            var y = height - yAxisLength * temp / maxTemp - padding;
+        var tempBubblePosition = function (index, temperature) {
+            var x = index * monthWidth + (monthWidth / 2) + padding;
+            var y = height - yAxisLength * temperature / maxTemp - padding;
             return {point: new paper.Point(x, y)};
-        }
+        };
 
-        var displayTempBubbles = function (i, month, temps) {
+        var displayTempBubbles = function (index, data) {
             var tempPadding = 8,
                 radius = monthWidth / 2 - tempPadding * 2,
                 fontSize = 16,
-                highPosition = tempBubblePosition(i, 'high', temps),
-                lowPosition = tempBubblePosition(i, 'low', temps);
+                highPosition = tempBubblePosition(index, data.high),
+                lowPosition = tempBubblePosition(index, data.low);
 
             var drawBubble = function (position, label, color) {
                 var circle = new paper.Path.Circle(position.point, radius);
@@ -565,8 +592,8 @@ $(function () {
                 centeredText(label, position.point.x, position.point.y, fontSize, '#fff');
             };
 
-            drawBubble(highPosition, temps.high, highColor);
-            drawBubble(lowPosition, temps.low, lowColor);
+            drawBubble(highPosition, data.high, highColor);
+            drawBubble(lowPosition, data.low, lowColor);
         };
 
         withTemperatures(displayMonthLabels);
@@ -636,14 +663,14 @@ $(function () {
             }
         }
 
-        var displayMonthLabels = function (i, month) {
+        var displayMonthLabels = function (index, data) {
             var monthFontSize = 16,
                 monthFontPadding = 1,
-                x1 = padding + monthWidth * i ,
+                x1 = padding + monthWidth * index ,
                 y1 = padding - 2 * monthFontSize,
                 x2 = x1 + monthWidth - monthFontPadding,
                 y2 = y1 + 2 * monthFontSize + monthFontPadding,
-                textX = i * monthWidth + monthWidth / 2 + padding,
+                textX = index * monthWidth + monthWidth / 2 + padding,
                 textY = y1 + 1.5 * monthFontSize;
 
             var monthLabel = new paper.Rectangle(
@@ -652,7 +679,7 @@ $(function () {
             );
             var monthLabelPath = new paper.Path.Rectangle(monthLabel);
             monthLabelPath.fillColor = "#9f9e83";
-            centeredText(month.substring(0, 3), textX, textY, monthFontSize, '#fff');
+            centeredText(data.month.substring(0, 3), textX, textY, monthFontSize, '#fff');
         };
 
         var lowLinkPath = new paper.Path();
@@ -663,34 +690,33 @@ $(function () {
         highLinkPath.strokeColor = highColor;
         highLinkPath.lineWidth = .75;
 
-        var linkBubbles = function (i, month, temps) {
-            var lowPosition = tempBubblePosition(i, 'low', temps),
-                highPosition = tempBubblePosition(i, 'high', temps),
+        var linkBubbles = function (index, data) {
+            var lowPosition = tempBubblePosition(index, data.low),
+                highPosition = tempBubblePosition(index, data.high),
                 tempPadding = 8,
                 radius = monthWidth / 2 - tempPadding * 2;
 
             lowLinkPath.add(new paper.Point(lowPosition.point.x, lowPosition.point.y - radius));
             highLinkPath.add(new paper.Point(highPosition.point.x, highPosition.point.y - radius));
-        }
+        };
 
-        var tempBubblePosition = function (i, type, temps) {
-            var temp = temps[type];
+        var tempBubblePosition = function (i, temperature) {
             var x = i * monthWidth + (monthWidth / 2) + padding;
 
             var tempDiff = maxTemp + -minTemp;
-            var value = Math.abs(temp + -minTemp)
+            var value = Math.abs(temperature + -minTemp);
             var rawY = value / tempDiff;
 
             var y = height - padding - rawY * yAxisLength + minTemp;
             return {point: new paper.Point(x, y)};
-        }
+        };
 
-        var displayTempBubbles = function (i, month, temps) {
+        var displayTempBubbles = function (index, data) {
             var tempPadding = 8,
                 radius = monthWidth / 2 - tempPadding * 2,
                 fontSize = 16,
-                highPosition = tempBubblePosition(i, 'high', temps),
-                lowPosition = tempBubblePosition(i, 'low', temps);
+                highPosition = tempBubblePosition(index, data.high),
+                lowPosition = tempBubblePosition(index, data.low);
 
             var drawBubble = function (position, type, label, color) {
                 var group = new paper.Group();
@@ -714,8 +740,8 @@ $(function () {
                         otherColor = 'darkblue';
                     }
 
-                    var newPosition = tempBubblePosition(i, otherType, temps);
-                    otherBubble = drawBubble(newPosition, otherType, temps[otherType], otherColor);
+                    var newPosition = tempBubblePosition(index, data[otherType]);
+                    otherBubble = drawBubble(newPosition, otherType, data[otherType], otherColor);
                 };
 
                 group.onMouseLeave = function () {
@@ -728,8 +754,8 @@ $(function () {
                 return group;
             };
 
-            drawBubble(highPosition, 'high', temps.high, highColor);
-            drawBubble(lowPosition, 'low', temps.low, lowColor);
+            drawBubble(highPosition, 'high', data.high, highColor);
+            drawBubble(lowPosition, 'low', data.low, lowColor);
         };
 
         withTemperatures(displayMonthLabels);
@@ -739,7 +765,7 @@ $(function () {
         var tool = new paper.Tool();
         tool.onMouseDown = function (event) {
             console.log(event.item);
-        }
+        };
 
 
         paper.view.draw();
@@ -805,14 +831,14 @@ $(function () {
             }
         }
 
-        var displayMonthLabels = function (i, month) {
+        var displayMonthLabels = function (index, data) {
             var monthFontSize = 16,
                 monthFontPadding = 1,
-                x1 = padding + monthWidth * i ,
+                x1 = padding + monthWidth * index ,
                 y1 = padding - 2 * monthFontSize,
                 x2 = x1 + monthWidth - monthFontPadding,
                 y2 = y1 + 2 * monthFontSize + monthFontPadding,
-                textX = i * monthWidth + monthWidth / 2 + padding,
+                textX = index * monthWidth + monthWidth / 2 + padding,
                 textY = y1 + 1.5 * monthFontSize;
 
             var monthLabel = new paper.Rectangle(
@@ -821,7 +847,7 @@ $(function () {
             );
             var monthLabelPath = new paper.Path.Rectangle(monthLabel);
             monthLabelPath.fillColor = "#9f9e83";
-            centeredText(month.substring(0, 3), textX, textY, monthFontSize, '#fff');
+            centeredText(data.month.substring(0, 3), textX, textY, monthFontSize, '#fff');
         };
 
         var lowLinkPath = new paper.Path();
@@ -832,34 +858,33 @@ $(function () {
         highLinkPath.strokeColor = highColor;
         highLinkPath.lineWidth = .75;
 
-        var linkBubbles = function (i, month, temps) {
-            var lowPosition = tempBubblePosition(i, 'low', temps),
-                highPosition = tempBubblePosition(i, 'high', temps),
+        var linkBubbles = function (index, data) {
+            var lowPosition = tempBubblePosition(index, data.low),
+                highPosition = tempBubblePosition(index, data.high),
                 tempPadding = 8,
                 radius = monthWidth / 2 - tempPadding * 2;
 
             lowLinkPath.add(new paper.Point(lowPosition.point.x, lowPosition.point.y - radius));
             highLinkPath.add(new paper.Point(highPosition.point.x, highPosition.point.y - radius));
-        }
+        };
 
-        var tempBubblePosition = function (i, type, temps) {
-            var temp = temps[type];
+        var tempBubblePosition = function (i, temperature) {
             var x = i * monthWidth + (monthWidth / 2) + padding;
 
             var tempDiff = maxTemp + -minTemp;
-            var value = Math.abs(temp + -minTemp)
+            var value = Math.abs(temperature + -minTemp);
             var rawY = value / tempDiff;
 
             var y = height - padding - rawY * yAxisLength + minTemp;
             return {point: new paper.Point(x, y)};
-        }
+        };
 
-        var displayTempBubbles = function (i, month, temps) {
+        var displayTempBubbles = function (index, data) {
             var tempPadding = 8,
                 radius = monthWidth / 2 - tempPadding * 2,
                 fontSize = 16,
-                highPosition = tempBubblePosition(i, 'high', temps),
-                lowPosition = tempBubblePosition(i, 'low', temps);
+                highPosition = tempBubblePosition(index, data.high),
+                lowPosition = tempBubblePosition(index, data.low);
 
             var drawBubble = function (position, type, label, color) {
                 var group = new paper.Group();
@@ -884,10 +909,10 @@ $(function () {
                     }
 
                     if (otherType != undefined && otherBubble == undefined) {
-                        var destination = tempBubblePosition(i, otherType, temps);
+                        var destination = tempBubblePosition(index, data[otherType]);
 
-                        otherBubble = drawBubble(position, otherType, temps[otherType], otherColor);
-                        otherBubble.onFrame = function (event) {
+                        otherBubble = drawBubble(position, otherType, data[otherType], otherColor);
+                        otherBubble.onFrame = function () {
 
                             if (otherBubble != undefined) {
                                 var y = destination.point.y - otherBubble.position.y;
@@ -899,7 +924,7 @@ $(function () {
                                     otherBubble.onFrame = undefined;
                                 }
                             }
-                        }
+                        };
 
                         setTimeout(function () {
                             otherBubble.remove();
@@ -913,8 +938,8 @@ $(function () {
                 return group;
             };
 
-            drawBubble(highPosition, 'high', temps.high, highColor);
-            drawBubble(lowPosition, 'low', temps.low, lowColor);
+            drawBubble(highPosition, 'high', data.high, highColor);
+            drawBubble(lowPosition, 'low', data.low, lowColor);
         };
 
         withTemperatures(displayMonthLabels);
@@ -924,12 +949,11 @@ $(function () {
         var tool = new paper.Tool();
         tool.onMouseDown = function (event) {
             console.log(event.item);
-        }
+        };
 
 
         paper.view.draw();
     });
-
 
     $.deck('.slide');
 
@@ -995,12 +1019,10 @@ $(function () {
 
 
     function withTemperatures(doThis) {
-        var counter = 0;
-        var previousTemps;
-        $.each(demo.temperatureData, function (key, value) {
-            doThis(counter, key, value, previousTemps);
-            previousTemps = value;
-            counter++;
+        var previousData;
+        $.each(demo.temperatureData, function (index, data) {
+            doThis(index, data, previousData);
+            previousData = data;
         });
     }
 
