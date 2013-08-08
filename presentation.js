@@ -1384,12 +1384,12 @@ $(function () {
             .append('text');
 
         monthText
-            .attr("x", function (d,i) {
+            .attr("x", function (d, i) {
                 return gridXScale(i + 1) - 10
             })
             .attr("y", monthLabelHeight / 2)
-            .text(function(d) {
-                return d.substring(0,3)
+            .text(function (d) {
+                return d.substring(0, 3)
             })
             .attr("font-family", "sans-serif")
             .attr("font-size", radius * .6 + "px")
@@ -1479,6 +1479,412 @@ $(function () {
             .attr('class', 'grid');
     });
 
+
+    $(".d37").bind('deck.becameCurrent', function (e) {
+        var width = $(e.target).width(),
+            height = $(e.target).height(),
+            padding = 100,
+            colors = {high: "#ff7f00", low: "#148d9f"},
+            radius = 20,
+            tempLabelWidth = 60,
+            monthLabelHeight = 32;
+
+
+        var months = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        var tmpBubbleData = demo.temperatureData.map(function (d) {
+            var toObject = function (d, type) {
+                return {monthIndex: _.indexOf(months, d.month), temperature: d[type], type: type};
+            };
+
+            return ["high", "low"].map(function (t) {
+                return toObject(d, t);
+            })
+        });
+
+        var bubbleData = _.flatten(tmpBubbleData);
+
+        var maxTemperature = d3.max(bubbleData, function (d) {
+            return d.temperature + 20
+        });
+        var minTemperature = d3.min(bubbleData, function (d) {
+            return d.temperature - 20
+        });
+
+        var maxMonth = d3.max(bubbleData, function (d) {
+            return d.monthIndex
+        });
+        var minMonth = d3.min(bubbleData, function (d) {
+            return d.monthIndex
+        });
+
+        var gridXMin = minMonth,
+            gridXMax = maxMonth + 2;
+
+        var gridXScale = d3.scale.linear()
+            .domain([gridXMin, gridXMax])
+            .range([tempLabelWidth, width - 2 * padding]);
+
+        var yScale = d3.scale.linear()
+            .domain([maxTemperature + 10, minTemperature - 10])
+            .range([0, height - 2 * padding]);
+
+        var svg = d3.select(e.target)
+            .append("svg")
+            .attr('width', width - 2 * padding)
+            .attr('height', height - 2 * padding)
+            .style('margin-top', padding)
+            .style('margin-left', padding);
+
+        svg.append("rect")
+            .attr("x", tempLabelWidth)
+            .attr("y", 0)
+            .attr("width", '100%')
+            .attr("height", '100%')
+            .attr("fill", "#f0eeda");
+
+        svg.append("rect")
+            .attr("x", 0)
+            .attr("y", monthLabelHeight)
+            .attr("width", tempLabelWidth)
+            .attr("height", height - monthLabelHeight - 2 * padding)
+            .attr("fill", "#ded8b5");
+
+        svg.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width - 2 * padding)
+            .attr("height", monthLabelHeight)
+            .attr("fill", "#9f9e83");
+
+        var monthText = svg.selectAll("text.monthLabel")
+            .data(months)
+            .enter()
+            .append('text');
+
+        monthText
+            .attr("x", function (d, i) {
+                return gridXScale(i + 1) - 10
+            })
+            .attr("y", monthLabelHeight / 2)
+            .text(function (d) {
+                return d.substring(0, 3)
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", radius * .6 + "px")
+            .attr('fill', 'white')
+            .attr('class', 'monthLabel');
+
+        var tempLabelMin = Math.floor(minTemperature / 10) * 10;
+        var tempLabelMax = Math.ceil(maxTemperature / 10) * 10;
+        var tempLabelRange = d3.range(tempLabelMin, tempLabelMax, 20);
+        var tempLineRange = d3.range(tempLabelMin, tempLabelMax, 10);
+
+        var tempText = svg.selectAll("text.tempLabel")
+            .data(tempLabelRange)
+            .enter()
+            .append('text');
+
+        tempText
+            .attr("x", 20)
+            .attr("y", function (d) {
+                return yScale(d);
+            })
+            .text(function (d) {
+                return d + "°F"
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", radius * .6 + "px")
+            .attr('fill', '#3b5b78')
+            .attr('class', 'tempLabel');
+
+
+        var gridLines = svg.selectAll("line.grid")
+            .data(tempLineRange)
+            .enter()
+            .append('line');
+
+        gridLines
+            .attr('x1', function () {
+                return gridXScale(gridXMin)
+            })
+            .attr('y1', function (d) {
+                return yScale(d)
+            })
+            .attr('x2', function () {
+                return gridXScale(gridXMax)
+            })
+            .attr('y2', function (d) {
+                return yScale(d)
+            })
+            .attr('stroke-width', 0.75)
+            .attr('stroke', '#bababa');
+
+        var circles = svg.selectAll("circle")
+            .data(bubbleData)
+            .enter()
+            .append('circle');
+
+        circles
+            .attr("cx", function (d) {
+                return gridXScale(d.monthIndex + 1)
+            })
+            .attr("cy", 0)
+            .attr("r", 20)
+            .attr("fill", function (d) {
+                return colors[d.type]
+            })
+            .attr("visibility", "hidden");
+
+
+        var text = svg.selectAll("text.grid")
+            .data(bubbleData)
+            .enter()
+            .append('text');
+
+        text
+            .attr("x", function (d) {
+                return gridXScale(d.monthIndex + 1) - radius * .5
+            })
+            .attr("y", 0)
+            .text(function (d) {
+                return d.temperature
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", radius * .8 + "px")
+            .attr("fill", "white")
+            .attr('class', 'grid')
+            .attr("visibility", "hidden");
+
+        setTimeout(function () {
+            circles
+                .transition()
+                .attr("cy", function (d) {
+                    return yScale(d.temperature)
+                })
+                .duration(2000)
+                .delay(1000)
+                .ease("elastic")
+                .attr("visibility", "visible");
+
+            text
+                .transition()
+                .attr("y", function (d) {
+                    return yScale(d.temperature) + radius * 0.25
+                })
+                .duration(2000)
+                .delay(1000)
+                .ease("elastic")
+                .attr("visibility", "visible");
+
+
+        }, 2000);
+
+    });
+
+    $(".d38").bind('deck.becameCurrent', function (e) {
+        var width = $(e.target).width(),
+            height = $(e.target).height(),
+            padding = 100,
+            colors = {high: "#ff7f00", low: "#148d9f"},
+            radius = 15,
+            tempLabelWidth = 60,
+            monthLabelHeight = 32;
+
+
+        var months = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        var tmpBubbleData = demo.temperatureData.map(function (d) {
+            var toObject = function (d, type) {
+                return {monthIndex: _.indexOf(months, d.month), temperature: d[type], type: type};
+            };
+
+            return ["high", "low"].map(function (t) {
+                return toObject(d, t);
+            })
+        });
+
+        var bubbleData = _.flatten(tmpBubbleData);
+
+        var maxTemperature = d3.max(demo.temperatureData, function (d) {
+            return d.max + 20
+        });
+        var minTemperature = d3.min(demo.temperatureData, function (d) {
+            return d.min - 20
+        });
+
+        var maxMonth = d3.max(bubbleData, function (d) {
+            return d.monthIndex
+        });
+        var minMonth = d3.min(bubbleData, function (d) {
+            return d.monthIndex
+        });
+
+        var gridXMin = minMonth,
+            gridXMax = maxMonth + 2;
+
+        var gridXScale = d3.scale.linear()
+            .domain([gridXMin, gridXMax])
+            .range([tempLabelWidth, width - 2 * padding]);
+
+        var yScale = d3.scale.linear()
+            .domain([maxTemperature + 10, minTemperature - 10])
+            .range([0, height - 2 * padding]);
+
+        var svg = d3.select(e.target)
+            .append("svg")
+            .attr('width', width - 2 * padding)
+            .attr('height', height - 2 * padding)
+            .style('margin-top', padding)
+            .style('margin-left', padding);
+
+        svg.append("rect")
+            .attr("x", tempLabelWidth)
+            .attr("y", 0)
+            .attr("width", '100%')
+            .attr("height", '100%')
+            .attr("fill", "#f0eeda");
+
+        svg.append("rect")
+            .attr("x", 0)
+            .attr("y", monthLabelHeight)
+            .attr("width", tempLabelWidth)
+            .attr("height", height - monthLabelHeight - 2 * padding)
+            .attr("fill", "#ded8b5");
+
+        svg.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width - 2 * padding)
+            .attr("height", monthLabelHeight)
+            .attr("fill", "#9f9e83");
+
+        var monthText = svg.selectAll("text.monthLabel")
+            .data(months)
+            .enter()
+            .append('text');
+
+        monthText
+            .attr("x", function (d, i) {
+                return gridXScale(i + 1) - 10
+            })
+            .attr("y", monthLabelHeight / 2)
+            .text(function (d) {
+                return d.substring(0, 3)
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", radius * .6 + "px")
+            .attr('fill', 'white')
+            .attr('class', 'monthLabel');
+
+        var tempLabelMin = Math.floor(minTemperature / 10) * 10;
+        var tempLabelMax = Math.ceil(maxTemperature / 10) * 10;
+        var tempLabelRange = d3.range(tempLabelMin, tempLabelMax, 20);
+        var tempLineRange = d3.range(tempLabelMin, tempLabelMax, 10);
+
+        var tempText = svg.selectAll("text.tempLabel")
+            .data(tempLabelRange)
+            .enter()
+            .append('text');
+
+        tempText
+            .attr("x", 20)
+            .attr("y", function (d) {
+                return yScale(d);
+            })
+            .text(function (d) {
+                return d + "°F"
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", radius * .6 + "px")
+            .attr('fill', '#3b5b78')
+            .attr('class', 'tempLabel');
+
+
+        var gridLines = svg.selectAll("line.grid")
+            .data(tempLineRange)
+            .enter()
+            .append('line');
+
+        gridLines
+            .attr('x1', function () {
+                return gridXScale(gridXMin)
+            })
+            .attr('y1', function (d) {
+                return yScale(d)
+            })
+            .attr('x2', function () {
+                return gridXScale(gridXMax)
+            })
+            .attr('y2', function (d) {
+                return yScale(d)
+            })
+            .attr('stroke-width', 0.75)
+            .attr('stroke', '#bababa');
+
+        var circles = svg.selectAll("circle")
+            .data(bubbleData)
+            .enter()
+            .append('circle');
+
+        circles
+            .attr("cx", function (d) {
+                return gridXScale(d.monthIndex + 1)
+            })
+            .attr("cy", 0)
+            .attr("r", 20)
+            .attr("fill", function (d) {
+                return colors[d.type]
+            })
+            .attr("visibility", "hidden");
+
+
+        var text = svg.selectAll("text.grid")
+            .data(bubbleData)
+            .enter()
+            .append('text');
+
+        text
+            .attr("x", function (d) {
+                return gridXScale(d.monthIndex + 1) - radius * .5
+            })
+            .attr("y", 0)
+            .text(function (d) {
+                return d.temperature
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", radius * .8 + "px")
+            .attr("fill", "white")
+            .attr('class', 'grid')
+            .attr("visibility", "hidden");
+
+        setTimeout(function () {
+            circles
+                .transition()
+                .attr("cy", function (d) {
+                    return yScale(d.temperature)
+                })
+                .duration(2000)
+                .delay(1000)
+                .ease("elastic")
+                .attr("visibility", "visible");
+
+            text
+                .transition()
+                .attr("y", function (d) {
+                    return yScale(d.temperature) + radius * 0.25
+                })
+                .duration(2000)
+                .delay(1000)
+                .ease("elastic")
+                .attr("visibility", "visible");
+
+
+        }, 2000);
+
+    });
 
     $.deck('.slide');
 
