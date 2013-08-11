@@ -77,6 +77,24 @@
 </section>
 
 <section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='demoJquery' name="code" class="code" mode="javascript"
+                  style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
+var body = "",
+  plot = function (index, data) {
+    var row = "<td class='month'>" + data.month + "</td>";
+    row += "<td class='high'>" + data.high + "</td>";
+    row += "<td class='low'>" + data.low + "</td>";
+    body += "<tr>" + row + "</tr>"
+  };
+
+demo.withTemperatures(plot);
+console.log(body);
+        </textarea>
+    </div>
+</section>
+
+<section class="slide">
     <h1>Have data, will graph</h1>
 </section>
 
@@ -84,24 +102,137 @@
     <h1>The canvas</h1>
 </section>
 
+<section class='slide'>
+    <h2 class='slide'>paths</h2>
+    <h2 class='slide'>text</h2>
+    <h2 class='slide'>gradient</h2>
+    <h2 class='slide'>images</h2>
+    <h2 class='slide'>rectangles</h2>
+    <h2 class='slide'>circles</h2>
+</section>
+
 <section class="slide canvas1" id='draw_on_canvas'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='showCanvas' name="code" class="code" mode="javascript"
+                  style="display: none;">
+var canvas = $(element).find('canvas')[0];
+var context = canvas.getContext("2d");
+
+context.moveTo(xLineStart, padding);
+context.lineTo(xLineStart + xLineLength, padding);
+context.stroke();
+        </textarea>
+    </div>
 </section>
 
 <section class="slide canvas2" id='draw_axes'>
     <canvas></canvas>
 </section>
 
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas2_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+var context = initCanvas(e.target),
+  width = context.canvas.width,
+  height = context.canvas.height,
+  padding = 100;
+
+context.lineWidth = 8;
+
+context.moveTo(padding, height - padding);
+context.lineTo(width - padding, height - padding);
+context.stroke();
+
+context.moveTo(padding, padding);
+context.lineTo(padding, height - padding);
+context.stroke();
+        </textarea>
+    </div>
+</section>
+
+
 <section class="slide canvas3" id='draw_axes_2'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas3_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+function drawLine(context, fromX, fromY, toX,
+                  toY, style, width) {
+  context.beginPath();
+  context.strokeStyle = style;
+  context.lineWidth = width;
+  context.moveTo(fromX, fromY);
+  context.lineTo(toX, toY);
+  context.stroke();
+}
+
+var context = initCanvas(e.target),
+  width = context.canvas.width,
+  height = context.canvas.height,
+  padding = 100;
+
+context.lineWidth = 8;
+
+drawLine(context, padding, height - padding, width - padding,
+         height - padding, "#000", 8);
+drawLine(context, padding, padding, padding, height - padding,
+         "#000", 8);
+        </textarea>
+    </div>
 </section>
 
 <section class="slide canvas4" id='draw_temps'>
     <canvas></canvas>
 </section>
 
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas4_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+var monthWidth = xAxisLength / 12,
+  center = counter * monthWidth + (monthWidth / 2) + padding,
+  radius = (monthWidth / 2) - (tempPadding * 2),
+  y1 = height - (yAxisLength * data.high / maxTemp) - padding;
+
+context.beginPath();
+context.arc(center, y1, radius, 0, 2 * Math.PI, false);
+context.closePath();
+context.stroke();
+        </textarea>
+    </div>
+</section>
+
 <section class="slide canvas5" id='draw_temps_with_color'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas5_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+function drawTempArc(context, x, y, r, label, fillColor,
+                     fontSize, fontColor) {
+  context.fillStyle = fillColor;
+  context.beginPath();
+  context.arc(x, y, r, 0, 2 * Math.PI, false);
+  context.closePath();
+  context.fill();
+
+  context.font = fontSize + 'pt Calibri';
+  context.textAlign = 'center';
+  context.fillStyle = fontColor;
+  context.fillText(label, x, y + (fontSize / 2));
+}
+        </textarea>
+    </div>
 </section>
 
 <section class="slide canvas6" id='draw_temps_labels'>

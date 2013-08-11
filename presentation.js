@@ -32,6 +32,15 @@ $(function () {
         { month: "December", "high": 45, "low": 28, max: 77, min: -3}
     ];
 
+    demo.withTemperatures = function(doThis) {
+        var previousData;
+        $.each(demo.temperatureData, function (index, data) {
+            doThis(index, data, previousData);
+            previousData = data;
+        });
+    }
+
+
     $(".temperatureView").bind('deck.becameCurrent', function (e) {
         var body = "";
         var plot = function (index, data) {
@@ -41,7 +50,7 @@ $(function () {
             body += "<tr>" + row + "</tr>"
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
 
         $(e.target).find("table tbody").html(body);
     });
@@ -144,7 +153,7 @@ $(function () {
             counter++;
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
     });
 
     $(".canvas5").bind('deck.becameCurrent', function (e) {
@@ -188,7 +197,7 @@ $(function () {
             counter++;
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
     });
 
     $(".canvas6").bind('deck.becameCurrent', function (e) {
@@ -239,7 +248,7 @@ $(function () {
             counter++;
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
     });
 
     $(".canvas7").bind('deck.becameCurrent', function (e) {
@@ -290,7 +299,7 @@ $(function () {
             counter++;
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
 
         var tempLabelBg = "#ded8b5";
         var tempLabelWidth = 60;
@@ -387,7 +396,7 @@ $(function () {
             counter++;
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
     });
 
     $(".canvas9").bind('deck.becameCurrent', function (e) {
@@ -470,7 +479,7 @@ $(function () {
             counter++;
         };
 
-        withTemperatures(plot);
+        demo.withTemperatures(plot);
 
         linkTemps(context, tempPoints.high, highColor);
         linkTemps(context, tempPoints.low, lowColor);
@@ -596,9 +605,9 @@ $(function () {
             drawBubble(lowPosition, data.low, lowColor);
         };
 
-        withTemperatures(displayMonthLabels);
-        withTemperatures(linkBubbles);
-        withTemperatures(displayTempBubbles);
+        demo.withTemperatures(displayMonthLabels);
+        demo.withTemperatures(linkBubbles);
+        demo.withTemperatures(displayTempBubbles);
 
         paper.view.draw();
     });
@@ -758,9 +767,9 @@ $(function () {
             drawBubble(lowPosition, 'low', data.low, lowColor);
         };
 
-        withTemperatures(displayMonthLabels);
-        withTemperatures(linkBubbles);
-        withTemperatures(displayTempBubbles);
+        demo.withTemperatures(displayMonthLabels);
+        demo.withTemperatures(linkBubbles);
+        demo.withTemperatures(displayTempBubbles);
 
         var tool = new paper.Tool();
         tool.onMouseDown = function (event) {
@@ -942,9 +951,9 @@ $(function () {
             drawBubble(lowPosition, 'low', data.low, lowColor);
         };
 
-        withTemperatures(displayMonthLabels);
-        withTemperatures(linkBubbles);
-        withTemperatures(displayTempBubbles);
+        demo.withTemperatures(displayMonthLabels);
+        demo.withTemperatures(linkBubbles);
+        demo.withTemperatures(displayTempBubbles);
 
         var tool = new paper.Tool();
         tool.onMouseDown = function (event) {
@@ -1947,15 +1956,5 @@ $(function () {
 
         return context;
     }
-
-
-    function withTemperatures(doThis) {
-        var previousData;
-        $.each(demo.temperatureData, function (index, data) {
-            doThis(index, data, previousData);
-            previousData = data;
-        });
-    }
-
 })
 ;
