@@ -42,7 +42,7 @@
     <h1>Visualizing Data for Developers</h1>
 </section>
 
-<section class="slide">
+<section class="slide" id='the-bad-data'>
     <div style="margin-top: 60px">
         <textarea id='badData' name="code" class="code" mode="javascript"
                   style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
@@ -51,7 +51,7 @@
     </div>
 </section>
 
-<section class="slide">
+<section class="slide"  id='better-data'>
     <div style="margin-top: 60px">
         <textarea id='showInput' name="code" class="code" mode="javascript"
                   style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
@@ -61,7 +61,25 @@
 </section>
 
 <!-- our data -->
-<section class="slide temperatureView">
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='demoJquery' name="code" class="code" mode="javascript"
+                  style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
+            var body = "",
+            plot = function (index, data) {
+            var row = "<td class='month'>" + data.month + "</td>";
+            row += "<td class='high'>" + data.high + "</td>";
+            row += "<td class='low'>" + data.low + "</td>";
+            body += "<tr>" + row + "</tr>"
+            };
+
+            demo.withTemperatures(plot);
+            console.log(body);
+        </textarea>
+    </div>
+</section>
+
+<section class="slide temperatureView"  id='viewing-temps'>
     <table class='temperature'>
         <caption>Baltimore, MD, USA average temperatures</caption>
         <thead>
@@ -74,24 +92,6 @@
         <tbody>
         </tbody>
     </table>
-</section>
-
-<section class="slide">
-    <div style="margin-top: 60px">
-        <textarea id='demoJquery' name="code" class="code" mode="javascript"
-                  style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
-var body = "",
-  plot = function (index, data) {
-    var row = "<td class='month'>" + data.month + "</td>";
-    row += "<td class='high'>" + data.high + "</td>";
-    row += "<td class='low'>" + data.low + "</td>";
-    body += "<tr>" + row + "</tr>"
-  };
-
-demo.withTemperatures(plot);
-console.log(body);
-        </textarea>
-    </div>
 </section>
 
 <section class="slide">
@@ -111,8 +111,8 @@ console.log(body);
     <h2 class='slide'>circles</h2>
 </section>
 
-<section class="slide canvas1" id='draw_on_canvas'>
-    <canvas></canvas>
+<section class="slide">
+    <h1>Drawing on the canvas</h1>
 </section>
 
 <section class="slide">
@@ -129,8 +129,12 @@ context.stroke();
     </div>
 </section>
 
-<section class="slide canvas2" id='draw_axes'>
+<section class="slide canvas1" id='draw_on_canvas'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>Drawing a graph grid</h1>
 </section>
 
 <section class="slide">
@@ -155,9 +159,12 @@ context.stroke();
     </div>
 </section>
 
-
-<section class="slide canvas3" id='draw_axes_2'>
+<section class="slide canvas2" id='draw_axes'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>Refactoring lines?</h1>
 </section>
 
 <section class="slide">
@@ -179,18 +186,22 @@ var context = initCanvas(e.target),
   height = context.canvas.height,
   padding = 100;
 
-context.lineWidth = 8;
+  context.lineWidth = 8;
 
-drawLine(context, padding, height - padding, width - padding,
-         height - padding, "#000", 8);
-drawLine(context, padding, padding, padding, height - padding,
-         "#000", 8);
+  drawLine(context, padding, height - padding, width - padding,
+           height - padding, "#000", 8);
+  drawLine(context, padding, padding, padding, height - padding,
+           "#000", 8);
         </textarea>
     </div>
 </section>
 
-<section class="slide canvas4" id='draw_temps'>
+<section class="slide canvas3" id='draw_axes_2'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>Drawing circles</h1>
 </section>
 
 <section class="slide">
@@ -210,8 +221,12 @@ context.stroke();
     </div>
 </section>
 
-<section class="slide canvas5" id='draw_temps_with_color'>
+<section class="slide canvas4" id='draw_temps'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>Coloring our circles</h1>
 </section>
 
 <section class="slide">
@@ -225,6 +240,27 @@ function drawTempArc(context, x, y, r, label, fillColor,
   context.arc(x, y, r, 0, 2 * Math.PI, false);
   context.closePath();
   context.fill();
+}
+        </textarea>
+    </div>
+</section>
+
+<section class="slide canvas5" id='draw_temps_with_color'>
+    <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>Drawing text</h1>
+</section>
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas6_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+function drawTempArc(context, x, y, r, label, fillColor,
+                     fontSize, fontColor) {
+
+  // ... draw arc
 
   context.font = fontSize + 'pt Calibri';
   context.textAlign = 'center';
@@ -237,6 +273,36 @@ function drawTempArc(context, x, y, r, label, fillColor,
 
 <section class="slide canvas6" id='draw_temps_labels'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>What kind of data is this?</h1>
+</section>
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas7_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+
+context.fillStyle = monthLabelBg;
+var monthLabelX1 = counter * monthWidth + padding +
+  monthFontPadding,
+  monthLabelY1 = padding - (2 * monthFontSize),
+  monthLabelX2 = monthWidth - monthFontPadding,
+  monthLabelY2 = 2 * monthFontSize + monthFontPadding;
+
+context.fillRect(monthLabelX1, monthLabelY1, monthLabelX2,
+                 monthLabelY2);
+
+context.font = monthFontSize + 'pt Calibri';
+context.textAlign = 'center';
+context.fillStyle = monthColor;
+context.fillText(data.month.substring(0, 3), counter *
+  monthWidth + ( monthWidth / 2) + padding,
+  monthLabelY1 + 1.5 * monthFontSize);
+
+        </textarea>
+    </div>
 </section>
 
 <section class="slide canvas7" id='draw_axes_labels'>
