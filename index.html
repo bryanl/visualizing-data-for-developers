@@ -46,7 +46,7 @@
     <div style="margin-top: 60px">
         <textarea id='badData' name="code" class="code" mode="javascript"
                   style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
-            console.log(demo.notSoGoodData);
+console.log(demo.notSoGoodData);
         </textarea>
     </div>
 </section>
@@ -55,7 +55,7 @@
     <div style="margin-top: 60px">
         <textarea id='showInput' name="code" class="code" mode="javascript"
                   style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
-            console.log(demo.temperatureData);
+console.log(demo.temperatureData);
         </textarea>
     </div>
 </section>
@@ -65,16 +65,16 @@
     <div style="margin-top: 60px">
         <textarea id='demoJquery' name="code" class="code" mode="javascript"
                   style="display: none;" runnable="true" globals="$,window,_,JSON,demo">
-            var body = "",
-            plot = function (index, data) {
-            var row = "<td class='month'>" + data.month + "</td>";
-            row += "<td class='high'>" + data.high + "</td>";
-            row += "<td class='low'>" + data.low + "</td>";
-            body += "<tr>" + row + "</tr>"
-            };
+var body = "",
+  plot = function (index, data) {
+    var row = "<td class='month'>" + data.month + "</td>";
+    row += "<td class='high'>" + data.high + "</td>";
+    row += "<td class='low'>" + data.low + "</td>";
+    body += "<tr>" + row + "</tr>"
+  };
 
-            demo.withTemperatures(plot);
-            console.log(body);
+demo.withTemperatures(plot);
+console.log(body);
         </textarea>
     </div>
 </section>
@@ -284,6 +284,7 @@ function drawTempArc(context, x, y, r, label, fillColor,
         <textarea id='canvas7_code' name="code" class="code" mode="javascript"
                   style="display: none;">
 
+// top label
 context.fillStyle = monthLabelBg;
 var monthLabelX1 = counter * monthWidth + padding +
   monthFontPadding,
@@ -305,13 +306,79 @@ context.fillText(data.month.substring(0, 3), counter *
     </div>
 </section>
 
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas7_code2' name="code" class="code" mode="javascript"
+                  style="display: none;">
+for (var i = 10; i < maxTemp; i++) {
+  var labelY = height - (yAxisLength * i / maxTemp) - padding;
+
+  if (i % 20 == 0) {
+    var labelX = tempLabelX + tempLabelWidth / 2;
+    context.font = tempLabelFontSize + "pt Calibri";
+    context.fillStyle = tempLabelColor;
+    context.fillText(i + "°F", labelX, labelY)
+  }
+
+  if (i % 10 == 0) {
+    drawLine(context, padding, labelY, padding + xAxisLength,
+             labelY, "#bababa", .75);
+  }
+}
+
+            </textarea>
+        </div>
+</section>
+
 <section class="slide canvas7" id='draw_axes_labels'>
     <canvas></canvas>
+</section>
+
+<section class="slide">
+    <h1>Finishing off the grid</h1>
+</section>
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas8_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+context.fillStyle = "#f0eeda";
+context.fillRect(padding, padding, xAxisLength, yAxisLength);
+        </textarea>
+    </div>
 </section>
 
 <section class="slide canvas8" id='draw_grid'>
     <canvas></canvas>
 </section>
+
+<section class="slide">
+    <h1>Embellish?</h1>
+</section>
+
+
+<section class="slide">
+    <div style="margin-top: 60px">
+        <textarea id='canvas9_code' name="code" class="code" mode="javascript"
+                  style="display: none;">
+function linkTemps(context, points, style) {
+  context.beginPath();
+  context.strokeStyle = style;
+  for (var pointIndex = 0; pointIndex < points.length; pointIndex++) {
+    var coordinates = points[pointIndex];
+
+    if (pointIndex == 0) {
+      context.moveTo(coordinates.x, coordinates.y)
+    } else {
+      context.lineTo(coordinates.x, coordinates.y)
+    }
+  }
+  context.stroke();
+}
+        </textarea>
+    </div>
+</section>
+
 
 <section class="slide canvas9" id='connect_temps'>
     <canvas></canvas>
