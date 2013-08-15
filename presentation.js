@@ -38,7 +38,7 @@ $(function () {
             doThis(index, data, previousData);
             previousData = data;
         });
-    }
+    };
 
 
     $(".temperatureView").bind('deck.becameCurrent', function (e) {
@@ -1158,6 +1158,56 @@ $(function () {
             .attr("fill", function (d) {
                 return colors[d.type]
             })
+    });
+
+    $(".d33b").bind('deck.becameCurrent', function (e) {
+        var width = $(e.target).width(),
+            height = $(e.target).height(),
+            padding = 100,
+            colors = {high: "#ff7f00", low: "#148d9f"};
+
+        var months = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        var tmpBubbleData = demo.temperatureData.map(function (d) {
+            var toObject = function (d, type) {
+                return {monthIndex: _.indexOf(months, d.month), temperature: d[type], type: type};
+            };
+
+            return ["high", "low"].map(function (t) {
+                return toObject(d, t);
+            })
+        });
+
+        var bubbleData = _.flatten(tmpBubbleData);
+
+        var xScale = d3.scale.linear()
+            .domain([0, 11])
+            .range([padding, width - padding]);
+
+        var yScale = d3.scale.linear()
+            .domain([100, 0])
+            .range([padding, height - padding]);
+
+
+        d3.select(e.target)
+            .append("svg")
+            .attr('width', width)
+            .attr('height', height)
+            .selectAll("circle")
+            .data(bubbleData)
+            .enter()
+            .append('circle')
+            .attr("cx", function (d) {
+                return xScale(d.monthIndex)
+            })
+            .attr("cy", function (d) {
+                return yScale(d.temperature)
+            })
+            .attr("r", 20)
+            .attr("class", function (d) {
+                return "d33b-" + d.type;
+            });
     });
 
     $(".d34").bind('deck.becameCurrent', function (e) {
